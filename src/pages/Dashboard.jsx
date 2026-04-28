@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
-import API_URL from '../config';
+import api from '../api';
 import { motion } from 'framer-motion';
 import NearbyWorkers from '../components/NearbyWorkers';
 import ReviewModal from '../components/ReviewModal';
@@ -55,7 +54,7 @@ const Dashboard = () => {
   const fetchProfile = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`${API_URL}/auth/profile`);
+      const response = await api.get('/auth/profile');
       setProfile(response.data);
       setFormData({
         ...response.data.user,
@@ -72,7 +71,7 @@ const Dashboard = () => {
     if (!user) return;
     try {
       if (user.role === 'customer') {
-        const response = await axios.get(`${API_URL}/jobs?status=all`);
+        const response = await api.get('/jobs?status=all');
         console.log('API Response (customer jobs):', response.data);
         const fetchedJobs = Array.isArray(response.data.jobs) ? response.data.jobs : [];
         const customerId = user._id || user.id;
@@ -92,7 +91,7 @@ const Dashboard = () => {
     if (!user) return;
     try {
       if (user.role === 'worker') {
-        const response = await axios.get(`${API_URL}/jobs?status=all`);
+        const response = await api.get('/jobs?status=all');
         console.log('API Response (worker applications):', response.data);
         const fetchedJobs = Array.isArray(response.data.jobs) ? response.data.jobs : [];
         const userApplications = [];
@@ -123,7 +122,7 @@ const Dashboard = () => {
   const fetchDirectRequests = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`${API_URL}/jobs/direct-requests`);
+      const response = await api.get('/jobs/direct-requests');
       console.log('API Response (direct requests):', response.data);
       setDirectRequests(Array.isArray(response.data.jobs) ? response.data.jobs : []);
     } catch (error) {
@@ -227,11 +226,11 @@ const Dashboard = () => {
         // Remove undefined fields
         Object.keys(workerData).forEach(key => workerData[key] === undefined && delete workerData[key]);
 
-        await axios.put(`${API_URL}/workers/profile`, workerData);
+        await api.put('/workers/profile', workerData);
       }
 
       // Re-fetch profile to keep dashboard state consistent and avoid stale UI crashes.
-      const refreshedProfile = await axios.get(`${API_URL}/auth/profile`);
+      const refreshedProfile = await api.get('/auth/profile');
       setProfile(refreshedProfile.data);
       setFormData({
         ...refreshedProfile.data.user,
@@ -268,8 +267,8 @@ const Dashboard = () => {
       if (jobForm.budget) jobData.budget = parseFloat(jobForm.budget);
       if (jobForm.duration) jobData.duration = jobForm.duration;
 
-      await axios.post(`${API_URL}/jobs`, jobData);
-      const response = await axios.get(`${API_URL}/jobs`);
+      await api.post('/jobs', jobData);
+      const response = await api.get('/jobs');
       setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
 
       setJobForm({
@@ -379,8 +378,8 @@ const Dashboard = () => {
       if (editJobForm.budget) jobData.budget = parseFloat(editJobForm.budget);
       if (editJobForm.duration) jobData.duration = editJobForm.duration;
 
-      await axios.put(`${API_URL}/jobs/${editingJobId}`, jobData);
-      const response = await axios.get(`${API_URL}/jobs`);
+      await api.put(`/jobs/${editingJobId}`, jobData);
+      const response = await api.get('/jobs');
       setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
 
       setEditingJobId(null);
@@ -447,7 +446,7 @@ const Dashboard = () => {
     }
 
     try {
-      await axios.delete(`${API_URL}/jobs/${id}`);
+      await api.delete(`/jobs/${id}`);
       setJobs(jobs.filter(job => job._id !== id));
       alert('Job deleted successfully!');
     } catch (error) {
@@ -458,7 +457,7 @@ const Dashboard = () => {
 
   const handleAcceptApplication = async (jobId, applicationId) => {
     try {
-      await axios.put(`${API_URL}/jobs/${jobId}/applications/${applicationId}/accept`);
+      await api.put(`/jobs/${jobId}/applications/${applicationId}/accept`);
       await fetchJobs();
       alert('Application accepted!');
     } catch (error) {
@@ -472,7 +471,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      await axios.put(`${API_URL}/jobs/${jobId}/applications/${applicationId}/decline`);
+      await api.put(`/jobs/${jobId}/applications/${applicationId}/decline`);
       await fetchJobs();
       alert('Application declined!');
     } catch (error) {
