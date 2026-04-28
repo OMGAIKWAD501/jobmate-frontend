@@ -16,7 +16,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTopWorkers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/workers/top?limit=20`);
+        const response = await axios.get(`${API_URL}/workers/top?limit=20`);
         console.log('API Response (top workers):', response.data);
         setTopWorkers(Array.isArray(response.data) ? response.data : []);
       } catch (error) {

@@ -25,7 +25,7 @@ const DirectHireModal = ({ isOpen, onClose, worker, onJobRequested }) => {
         budget: Number(formData.budget)
       };
       
-      await axios.post(`${API_URL}/api/jobs/direct-request`, payload);
+      await axios.post(`${API_URL}/jobs/direct-request`, payload);
       toast.success('Direct request sent successfully!');
       onJobRequested();
       onClose();

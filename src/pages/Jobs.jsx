@@ -29,7 +29,7 @@ const Jobs = () => {
   const fetchAppliedJobIds = async () => {
     if (user?.role !== 'worker') return;
     try {
-      const response = await axios.get(`${API_URL}/api/jobs/my-applications`);
+      const response = await axios.get(`${API_URL}/jobs/my-applications`);
       setAppliedJobIds(response.data.appliedJobIds || []);
     } catch (err) {
       console.error('Error fetching applied job ids:', err);
@@ -39,7 +39,7 @@ const Jobs = () => {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/api/jobs`);
+      const response = await axios.get(`${API_URL}/jobs`);
       console.log('API Response (jobs):', response.data);
       setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
       setInfoMessage('');
@@ -73,7 +73,7 @@ const Jobs = () => {
         let usedRadius = radiusKm;
 
         for (const radius of radiusSequence) {
-          const response = await axios.get(`${API_URL}/api/nearby`, {
+          const response = await axios.get(`${API_URL}/nearby`, {
             params: {
               lat: coordinates.lat,
               lng: coordinates.lng,
@@ -90,7 +90,7 @@ const Jobs = () => {
         }
 
         if (nearbyJobs.length === 0) {
-          const fallback = await axios.get(`${API_URL}/api/jobs`);
+          const fallback = await axios.get(`${API_URL}/jobs`);
           console.log('API Response (fallback jobs):', fallback.data);
           setJobs(Array.isArray(fallback.data.jobs) ? fallback.data.jobs : []);
           setEffectiveRadiusKm(null);
@@ -136,7 +136,7 @@ const Jobs = () => {
 
     setApplyingJobIds((prev) => [...prev, jobId]);
     try {
-      await axios.post(`${API_URL}/api/jobs/${jobId}/apply`, {
+      await axios.post(`${API_URL}/jobs/${jobId}/apply`, {
         message: 'Excited to take this job opportunity.'
       });
       alert('Application submitted successfully!');

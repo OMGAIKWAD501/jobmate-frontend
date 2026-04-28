@@ -32,7 +32,7 @@ const JobJourneyCard = ({ job, onUpdate, onOpenReview }) => {
     }
   };
 
-  const handleAccept = () => handleAPI('put', `${API_URL}/api/jobs/${job._id}/direct-accept`);
+  const handleAccept = () => handleAPI('put', `${API_URL}/jobs/${job._id}/direct-accept`);
   
   const handleShareLocation = () => {
     setLoading(true);
@@ -41,12 +41,12 @@ const JobJourneyCard = ({ job, onUpdate, onOpenReview }) => {
     const lat = 19.0760;
     const lng = 72.8777;
     
-    handleAPI('put', `${API_URL}/api/jobs/${job._id}/share-location`, { lat, lng });
+    handleAPI('put', `${API_URL}/jobs/${job._id}/share-location`, { lat, lng });
   };
 
-  const handleStartJob = () => handleAPI('put', `${API_URL}/api/jobs/${job._id}/start`);
+  const handleStartJob = () => handleAPI('put', `${API_URL}/jobs/${job._id}/start`);
   
-  const handleMarkCompleted = () => handleAPI('put', `${API_URL}/api/jobs/${job._id}/complete`);
+  const handleMarkCompleted = () => handleAPI('put', `${API_URL}/jobs/${job._id}/complete`);
 
   const steps = [
     { id: 'pending', label: 'Requested', color: '#FCD34D' },
@@ -87,7 +87,7 @@ const JobJourneyCard = ({ job, onUpdate, onOpenReview }) => {
       <div className="journey-actions">
         {status === 'pending' && isCustomer && (
           <button 
-            onClick={() => handleAPI('delete', `${API_URL}/api/jobs/${job._id}`)} 
+            onClick={() => handleAPI('delete', `${API_URL}/jobs/${job._id}`)} 
             disabled={loading} 
             className="btn-secondary" 
             style={{ color: '#EF4444', borderColor: '#EF4444' }}

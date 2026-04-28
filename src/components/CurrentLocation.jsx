@@ -38,7 +38,7 @@ const CurrentLocation = () => {
       // 2. Post location securely to backend
       try {
         // Safe relative API call assuming proxy setup handles '/api'
-        const response = await fetch(`${API_URL}/api/location`, {
+        const response = await fetch(`${API_URL}/location`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat, lng }),

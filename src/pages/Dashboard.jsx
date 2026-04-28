@@ -55,7 +55,7 @@ const Dashboard = () => {
   const fetchProfile = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`${API_URL}/api/auth/profile`);
+      const response = await axios.get(`${API_URL}/auth/profile`);
       setProfile(response.data);
       setFormData({
         ...response.data.user,
@@ -72,7 +72,7 @@ const Dashboard = () => {
     if (!user) return;
     try {
       if (user.role === 'customer') {
-        const response = await axios.get(`${API_URL}/api/jobs?status=all`);
+        const response = await axios.get(`${API_URL}/jobs?status=all`);
         console.log('API Response (customer jobs):', response.data);
         const fetchedJobs = Array.isArray(response.data.jobs) ? response.data.jobs : [];
         const customerId = user._id || user.id;
@@ -92,7 +92,7 @@ const Dashboard = () => {
     if (!user) return;
     try {
       if (user.role === 'worker') {
-        const response = await axios.get(`${API_URL}/api/jobs?status=all`);
+        const response = await axios.get(`${API_URL}/jobs?status=all`);
         console.log('API Response (worker applications):', response.data);
         const fetchedJobs = Array.isArray(response.data.jobs) ? response.data.jobs : [];
         const userApplications = [];
@@ -123,7 +123,7 @@ const Dashboard = () => {
   const fetchDirectRequests = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`${API_URL}/api/jobs/direct-requests`);
+      const response = await axios.get(`${API_URL}/jobs/direct-requests`);
       console.log('API Response (direct requests):', response.data);
       setDirectRequests(Array.isArray(response.data.jobs) ? response.data.jobs : []);
     } catch (error) {
@@ -227,11 +227,11 @@ const Dashboard = () => {
         // Remove undefined fields
         Object.keys(workerData).forEach(key => workerData[key] === undefined && delete workerData[key]);
 
-        await axios.put(`${API_URL}/api/workers/profile`, workerData);
+        await axios.put(`${API_URL}/workers/profile`, workerData);
       }
 
       // Re-fetch profile to keep dashboard state consistent and avoid stale UI crashes.
-      const refreshedProfile = await axios.get(`${API_URL}/api/auth/profile`);
+      const refreshedProfile = await axios.get(`${API_URL}/auth/profile`);
       setProfile(refreshedProfile.data);
       setFormData({
         ...refreshedProfile.data.user,
@@ -268,8 +268,8 @@ const Dashboard = () => {
       if (jobForm.budget) jobData.budget = parseFloat(jobForm.budget);
       if (jobForm.duration) jobData.duration = jobForm.duration;
 
-      await axios.post(`${API_URL}/api/jobs`, jobData);
-      const response = await axios.get(`${API_URL}/api/jobs`);
+      await axios.post(`${API_URL}/jobs`, jobData);
+      const response = await axios.get(`${API_URL}/jobs`);
       setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
 
       setJobForm({
@@ -379,8 +379,8 @@ const Dashboard = () => {
       if (editJobForm.budget) jobData.budget = parseFloat(editJobForm.budget);
       if (editJobForm.duration) jobData.duration = editJobForm.duration;
 
-      await axios.put(`${API_URL}/api/jobs/${editingJobId}`, jobData);
-      const response = await axios.get(`${API_URL}/api/jobs`);
+      await axios.put(`${API_URL}/jobs/${editingJobId}`, jobData);
+      const response = await axios.get(`${API_URL}/jobs`);
       setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
 
       setEditingJobId(null);
@@ -447,7 +447,7 @@ const Dashboard = () => {
     }
 
     try {
-      await axios.delete(`${API_URL}/api/jobs/${id}`);
+      await axios.delete(`${API_URL}/jobs/${id}`);
       setJobs(jobs.filter(job => job._id !== id));
       alert('Job deleted successfully!');
     } catch (error) {
@@ -458,7 +458,7 @@ const Dashboard = () => {
 
   const handleAcceptApplication = async (jobId, applicationId) => {
     try {
-      await axios.put(`${API_URL}/api/jobs/${jobId}/applications/${applicationId}/accept`);
+      await axios.put(`${API_URL}/jobs/${jobId}/applications/${applicationId}/accept`);
       await fetchJobs();
       alert('Application accepted!');
     } catch (error) {
@@ -472,7 +472,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      await axios.put(`${API_URL}/api/jobs/${jobId}/applications/${applicationId}/decline`);
+      await axios.put(`${API_URL}/jobs/${jobId}/applications/${applicationId}/decline`);
       await fetchJobs();
       alert('Application declined!');
     } catch (error) {
@@ -504,7 +504,7 @@ const Dashboard = () => {
           const latitude = Number(position.coords.latitude);
           const longitude = Number(position.coords.longitude);
 
-          const endpoint = user.role === 'worker' ? `${API_URL}/api/workers/location` : `${API_URL}/api/auth/location`;
+          const endpoint = user.role === 'worker' ? `${API_URL}/workers/location` : `${API_URL}/auth/location`;
           await axios.put(endpoint, {
             lat: latitude,
             lng: longitude
@@ -813,7 +813,7 @@ const Dashboard = () => {
                   <JobJourneyCard 
                     key={job._id} 
                     job={job} 
-                    onUpdate={() => axios.get(`${API_URL}/api/jobs/direct-requests`).then(res => setDirectRequests(res.data.jobs))} 
+                    onUpdate={() => axios.get(`${API_URL}/jobs/direct-requests`).then(res => setDirectRequests(res.data.jobs))} 
                     onOpenReview={() => handleOpenReviewModal(job)}
                   />
                 )) : <p className="text-muted">No direct requests</p>}

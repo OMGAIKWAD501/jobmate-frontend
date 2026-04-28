@@ -26,7 +26,7 @@ const NearbyWorkers = () => {
       setLocationError('');
 
       try {
-        const response = await axios.get(`${API_URL}/api/nearby`, {
+        const response = await axios.get(`${API_URL}/nearby`, {
           params: {
             lat: coordinates.lat,
             lng: coordinates.lng,

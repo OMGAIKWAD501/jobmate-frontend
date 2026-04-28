@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      axios.get(`${API_URL}/api/auth/profile`)
+      axios.get(`${API_URL}/auth/profile`)
         .then(res => {
           setUser(res.data.user);
         })
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const res = await axios.post(
-        `${API_URL}/api/auth/login`,
+        `${API_URL}/auth/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
   // ✅ REGISTER
   const register = async (userData) => {
     try {
-      const res = await axios.post(`${API_URL}/api/auth/register`, userData);
+      const res = await axios.post(`${API_URL}/auth/register`, userData);
 
       const { token, user: newUser } = res.data;
 

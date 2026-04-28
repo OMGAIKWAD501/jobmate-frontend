@@ -23,12 +23,12 @@ const WorkerDetail = () => {
   useEffect(() => {
     const fetchWorkerAndReviews = async () => {
       try {
-        const workerRes = await axios.get(`${API_URL}/api/workers/${id}`);
+        const workerRes = await axios.get(`${API_URL}/workers/${id}`);
         setWorker(workerRes.data);
         
         // Wait to fetch reviews using the actual user _id associated with the worker
         const workerUserId = workerRes.data.user?._id || workerRes.data.user?.id;
-        const reviewsRes = await axios.get(`${API_URL}/api/workers/${workerUserId}/reviews`);
+        const reviewsRes = await axios.get(`${API_URL}/workers/${workerUserId}/reviews`);
         console.log('API Response (reviews):', reviewsRes.data);
         setReviews(Array.isArray(reviewsRes.data) ? reviewsRes.data : []);
       } catch (error) {
