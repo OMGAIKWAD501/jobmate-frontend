@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ VERY IMPORTANT (for session)
-  axios.defaults.withCredentials = true;
+  // Ensure cookie/session credentials are always included.
+  api.defaults.withCredentials = true;
 
   useEffect(() => {
     const token = localStorage.getItem('token');

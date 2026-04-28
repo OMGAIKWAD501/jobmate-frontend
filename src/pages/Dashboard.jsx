@@ -51,6 +51,19 @@ const Dashboard = () => {
 
   const [activeTab, setActiveTab] = useState(user?.role === 'worker' ? 'applications' : 'jobs');
 
+  const reverseGeocode = async (lat, lng) => {
+    const params = new URLSearchParams({
+      format: 'json',
+      lat: String(lat),
+      lon: String(lng)
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Reverse geocoding failed');
+    }
+    return response.json();
+  };
+
   const fetchProfile = async () => {
     if (!user) return;
     try {
@@ -304,14 +317,8 @@ const Dashboard = () => {
         setJobCoordinates(nextCoordinates);
 
         try {
-          const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-            params: {
-              format: 'json',
-              lat: nextCoordinates.lat,
-              lon: nextCoordinates.lng
-            }
-          });
-          const address = response?.data?.display_name;
+          const response = await reverseGeocode(nextCoordinates.lat, nextCoordinates.lng);
+          const address = response?.display_name;
           if (address) {
             setJobForm((prev) => ({ ...prev, location: address }));
           } else {
@@ -411,14 +418,8 @@ const Dashboard = () => {
         setEditJobCoordinates(nextCoordinates);
 
         try {
-          const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-            params: {
-              format: 'json',
-              lat: nextCoordinates.lat,
-              lon: nextCoordinates.lng
-            }
-          });
-          const address = response?.data?.display_name;
+          const response = await reverseGeocode(nextCoordinates.lat, nextCoordinates.lng);
+          const address = response?.display_name;
           if (address) {
             setEditJobForm((prev) => ({ ...prev, location: address }));
           } else {
@@ -503,22 +504,16 @@ const Dashboard = () => {
           const latitude = Number(position.coords.latitude);
           const longitude = Number(position.coords.longitude);
 
-          const endpoint = user.role === 'worker' ? `${API_URL}/workers/location` : `${API_URL}/auth/location`;
-          await axios.put(endpoint, {
+          const endpoint = user.role === 'worker' ? '/workers/location' : '/auth/location';
+          await api.put(endpoint, {
             lat: latitude,
             lng: longitude
           });
 
           let resolvedAddress = '';
           try {
-            const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-              params: {
-                format: 'json',
-                lat: latitude,
-                lon: longitude
-              }
-            });
-            resolvedAddress = response?.data?.display_name || '';
+            const response = await reverseGeocode(latitude, longitude);
+            resolvedAddress = response?.display_name || '';
           } catch (reverseGeoError) {
             console.error('Error reverse geocoding profile location:', reverseGeoError);
           }
@@ -812,7 +807,7 @@ const Dashboard = () => {
                   <JobJourneyCard 
                     key={job._id} 
                     job={job} 
-                    onUpdate={() => axios.get(`${API_URL}/jobs/direct-requests`).then(res => setDirectRequests(res.data.jobs))} 
+                    onUpdate={() => api.get('/jobs/direct-requests').then(res => setDirectRequests(res.data.jobs))} 
                     onOpenReview={() => handleOpenReviewModal(job)}
                   />
                 )) : <p className="text-muted">No direct requests</p>}
