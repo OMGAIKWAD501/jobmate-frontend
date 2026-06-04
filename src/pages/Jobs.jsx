@@ -38,9 +38,17 @@ const Jobs = () => {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/jobs');
-      console.log('API Response (jobs):', response.data);
-      setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
+      let response;
+      if (user?.role === 'worker') {
+        // Workers see only jobs that match their skills
+        response = await api.get('/jobs/recommended/for-worker');
+        console.log('API Response (skill-matched jobs):', response.data);
+        setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
+      } else {
+        response = await api.get('/jobs');
+        console.log('API Response (jobs):', response.data);
+        setJobs(Array.isArray(response.data.jobs) ? response.data.jobs : []);
+      }
       setInfoMessage('');
       setEffectiveRadiusKm(null);
     } catch (err) {
@@ -89,11 +97,14 @@ const Jobs = () => {
         }
 
         if (nearbyJobs.length === 0) {
-          const fallback = await api.get('/jobs');
+          // Fallback: for workers show skill-matched jobs, for others show all jobs
+          const fallback = user?.role === 'worker'
+            ? await api.get('/jobs/recommended/for-worker')
+            : await api.get('/jobs');
           console.log('API Response (fallback jobs):', fallback.data);
           setJobs(Array.isArray(fallback.data.jobs) ? fallback.data.jobs : []);
           setEffectiveRadiusKm(null);
-          setInfoMessage(`No nearby jobs found within ${radiusSequence[radiusSequence.length - 1]} km. Showing latest open jobs instead.`);
+          setInfoMessage(`No nearby jobs found within ${radiusSequence[radiusSequence.length - 1]} km. Showing ${user?.role === 'worker' ? 'skill-matched' : 'latest open'} jobs instead.`);
         } else {
           setJobs(nearbyJobs);
           setEffectiveRadiusKm(usedRadius);
@@ -175,8 +186,13 @@ const Jobs = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
-          Job Marketplace
+          {user?.role === 'worker' ? 'Jobs Matching Your Skills' : 'Job Marketplace'}
         </motion.h1>
+        {user?.role === 'worker' && (
+          <p className="skill-filter-notice">
+            ✅ Showing only jobs that match your registered skills.
+          </p>
+        )}
 
         <div className="glass-panel jobs-toolbar">
           <div className="jobs-toolbar-row">
