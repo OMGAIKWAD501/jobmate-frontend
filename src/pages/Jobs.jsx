@@ -279,7 +279,7 @@ const Jobs = () => {
           )}
           {locationError && <p className="toolbar-error">{locationError}</p>}
           {infoMessage && <p className="toolbar-info">{infoMessage}</p>}
-        </div>
+        </div> 
 
         {error && <div className="error glass-panel">{error}</div>}
 
