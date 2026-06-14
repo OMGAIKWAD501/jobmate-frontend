@@ -333,7 +333,7 @@ const Jobs = () => {
                     whileHover={{ y: -5 }}
                   >
                     <div className="job-card-header">
-                      <h3>{job.title}</h3>
+                      <h3>{job.title}</h3> 
                       <div className="job-card-badges">
                         {matched && (
                           <span className="skill-match-badge">⚡ Skill Match</span>
